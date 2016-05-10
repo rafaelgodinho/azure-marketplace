@@ -4,7 +4,7 @@
   "parameters": {
     "artifactsBaseUrl": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/elastic/azure-marketplace/master/src",
+      "defaultValue": "https://raw.githubusercontent.com/elastic/azure-marketplace/hackfest/src",
       "metadata": {
         "artifactsBaseUrl": "Base URL of the Elastic template gallery package"
       }
@@ -359,10 +359,62 @@
     },
     "virtualNetworkName": {
       "type": "string",
-      "defaultValue": "esvnet",
+      "defaultValue": "es-vnet",
       "metadata": {
-        "description": "Virtual Network"
+        "description": "Virtual Network Name"
       }
+    },
+    "virtualNetworkNewOrExisting": {
+      "type": "string",
+      "allowedValues": [
+        "new",
+        "existing"
+      ],
+      "metadata": {
+        "description": "Choose to create a new Virtual Network or use an existing one. If choosing an existing one, the Subnets also need to exist."
+      }
+    },
+    "virtualNetworkResourceGroup": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Existing Virtual Network Resource Group"
+      }
+    },
+    "virtualNetworkAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/16",
+      "metadata": {
+        "description": "The address prefix size to use for a new Virtual Network"
+      }
+    },
+    "virtualNetworkSubnet1Name": {
+      "type": "string",
+      "defaultValue": "master",
+      "metadata": {
+        "description": "The name of the Subnet to use for master nodes"
+      }
+    },
+    "virtualNetworkSubnet1AddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/24",
+      "metadata": {
+        "description": "The address space of the master node Subnet"
+      }
+    },
+    "virtualNetworkSubnet2Name": {
+      "type": "string",
+      "defaultValue": "data",
+      "metadata": {
+        "description": "The name of the Subnet to use for data nodes"
+      }
+    },
+    "virtualNetworkSubnet2AddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.1.0/24",
+      "metadata": {
+        "description": "The address space of the data node Subnet"
+    }
     }
   },
   "variables": {
@@ -522,19 +574,28 @@
     "storageAccountPrefix": "elastic",
     "storageAccountNameShared": "[concat(variables('storageAccountPrefix'), 's', uniqueString(resourceGroup().id, deployment().name))]",
     "masterNodesIpPrefix": "10.0.0.1",
+    "networkTemplateUrl": "[concat(variables('templateBaseUrl'), 'networks/', parameters('virtualNetworkNewOrExisting'), '-virtual-network.json')]",
+    "networkResourceGroupMap": {
+      "new": "[resourceGroup().name]",
+      "existing": "[parameters('virtualNetworkResourceGroup')]"
+    }, 
     "networkSettings": {
       "virtualNetworkName": "[parameters('virtualNetworkName')]",
-      "addressPrefix": "10.0.0.0/16",
+      "resourceGroup": "[variables('networkResourceGroupMap')[parameters('virtualNetworkNewOrExisting')]]",
+      "location": "[variables('location')]",
+      "addressPrefix": "[parameters('virtualNetworkAddressPrefix')]",
       "subnet": {
         "master": {
-          "name": "master",
-          "prefix": "10.0.0.0/24",
-          "vnet": "[parameters('virtualNetworkName')]"
+          "name": "[parameters('virtualNetworkSubnet1Name')]",
+          "prefix": "[parameters('virtualNetworkSubnet1AddressPrefix')]",
+          "vnet": "[parameters('virtualNetworkName')]",
+          "resourceGroup": "[variables('networkResourceGroupMap')[parameters('virtualNetworkNewOrExisting')]]"
         },
         "data": {
-          "name": "data",
-          "prefix": "10.0.1.0/24",
-          "vnet": "[parameters('virtualNetworkName')]"
+          "name": "[parameters('virtualNetworkSubnet2Name')]",
+          "prefix": "[parameters('virtualNetworkSubnet2AddressPrefix')]",
+          "vnet": "[parameters('virtualNetworkName')]",
+          "resourceGroup": "[variables('networkResourceGroupMap')[parameters('virtualNetworkNewOrExisting')]]"
         }
       }
     },
@@ -832,11 +893,25 @@
           "location": {
             "value": "[variables('location')]"
           },
-          "networkSettings": {
-            "value": "[variables('networkSettings')]"
-          },
           "storageAccountName": {
             "value": "[variables('storageAccountNameShared')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "network",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('networkTemplateUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "networkSettings": {
+            "value": "[variables('networkSettings')]"
           }
         }
       }
@@ -846,7 +921,8 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]"
+        "[concat('Microsoft.Resources/deployments/', 'shared')]",
+        "[concat('Microsoft.Resources/deployments/', 'network')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -855,9 +931,6 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "location": {
-            "value": "[variables('location')]"
-          },
           "networkSettings": {
             "value": "[variables('networkSettings')]"
           }
@@ -869,7 +942,6 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
         "[concat('Microsoft.Resources/deployments/', 'loadbalancer')]"
       ],
       "properties": {
@@ -914,7 +986,6 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
         "[concat('Microsoft.Resources/deployments/', 'loadbalancer')]"
       ],
       "properties": {
@@ -962,7 +1033,6 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
         "[concat('Microsoft.Resources/deployments/', 'loadbalancer')]"
       ],
       "properties": {
@@ -1013,7 +1083,6 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
         "[concat('Microsoft.Resources/deployments/', 'loadbalancer')]"
       ],
       "properties": {
@@ -1052,7 +1121,6 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared')]",
         "[concat('Microsoft.Resources/deployments/', 'loadbalancer')]"
       ],
       "properties": {
@@ -1102,6 +1170,6 @@
     "jumpbox-shh": {
       "value": "[reference('jumpbox').outputs.ssh.value]",
       "type": "string"
-    }
+}
   }
 }

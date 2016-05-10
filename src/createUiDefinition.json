@@ -39,6 +39,65 @@
     ],
     "steps": [
       {
+        "name": "virtualNetworkSettingsStep",
+        "label": "Virtual Network Settings",
+        "subLabel": {
+          "preValidation": "Required",
+          "postValidation": "Done"
+        },
+        "bladeTitle": "Virtual Network Settings",
+        "elements": [
+          {
+            "name": "virtualNetwork",
+            "type": "Microsoft.Network.VirtualNetworkCombo",
+            "label": {
+              "virtualNetwork": "Virtual network",
+              "subnets": "Subnets"
+            },
+            "toolTip": {
+              "virtualNetwork": "Create a new Virtual Network or use an existing one",
+              "subnets": "Choose the Subnets for the Virtual Network. If choosing an existing Virtual Network, the Subnets need to exist beforehand; Creating new subnets in an existing virtual network is not supported by the template"
+            },
+            "defaultValue": {
+              "name": "es-vnet",
+              "addressPrefixSize": "/16"
+            },
+            "constraints": {
+              "minAddressPrefixSize": "/16"
+            },
+            "options": {
+              "hideExisting": false
+            },
+            "subnets": {
+              "subnet1": {
+                "label": "First subnet",
+                "defaultValue": {
+                  "name": "master",
+                  "addressPrefixSize": "/24"
+                },
+                "constraints": {
+                  "minAddressPrefixSize": "/24",
+                  "minAddressCount": 12,
+                  "requireContiguousAddresses": true
+                }
+              },
+              "subnet2": {
+                "label": "Second subnet",
+                "defaultValue": {
+                  "name": "data",
+                  "addressPrefixSize": "/26"
+                },
+                "constraints": {
+                  "minAddressPrefixSize": "/26",
+                  "minAddressCount": 8,
+                  "requireContiguousAddresses": true
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
         "name": "clusterSettingsStep",
         "label": "Cluster Settings",
         "subLabel": {
@@ -596,7 +655,7 @@
             "name": "loadBalancerType",
             "type": "Microsoft.Common.OptionsGroup",
             "label": "Load balancer type",
-            "defaultValue": "Internal",
+            "defaultValue": "internal",
             "toolTip": "Choose whether the load balancer should be public facing or internal.",
             "constraints": {
               "allowedValues": [
@@ -615,6 +674,16 @@
       }
     ],
     "outputs": {
+      "virtualNetworkName": "[steps('virtualNetworkSettingsStep').virtualNetwork.name]",
+      "virtualNetworkResourceGroup": "[steps('virtualNetworkSettingsStep').virtualNetwork.resourceGroup]",
+      "virtualNetworkAddressPrefix": "[steps('virtualNetworkSettingsStep').virtualNetwork.addressPrefix]",
+      "virtualNetworkNewOrExisting": "[steps('virtualNetworkSettingsStep').virtualNetwork.newOrExisting]",
+      "virtualNetworkSubnet1Name": "[steps('virtualNetworkSettingsStep').virtualNetwork.subnets.subnet1.name]",
+      "virtualNetworkSubnet1AddressPrefix": "[steps('virtualNetworkSettingsStep').virtualNetwork.subnets.subnet1.addressPrefix]",
+      "virtualNetworkSubnet1StartAddress": "[steps('virtualNetworkSettingsStep').virtualNetwork.subnets.subnet1.startAddress]",
+      "virtualNetworkSubnet2Name": "[steps('virtualNetworkSettingsStep').virtualNetwork.subnets.subnet2.name]",
+      "virtualNetworkSubnet2AddressPrefix": "[steps('virtualNetworkSettingsStep').virtualNetwork.subnets.subnet2.addressPrefix]",
+      "virtualNetworkSubnet2StartAddress": "[steps('virtualNetworkSettingsStep').virtualNetwork.subnets.subnet2.startAddress]",
       "esVersion": "[steps('clusterSettingsStep').esVersion]",
       "esClusterName": "[steps('clusterSettingsStep').esClusterName]",
       "loadBalancerType": "[steps('externalAccessStep').loadBalancerType]",

@@ -19,7 +19,7 @@ The market place Elasticsearch offering offers a simplified UI over the full pow
 
 ![Example UI Flow](images/ui.gif)
 
-You can view the UI in developer mode by [clicking here](https://portal.azure.com/#blade/Microsoft_Azure_Compute/CreateMultiVmWizardBlade/internal_bladeCallId/anything/internal_bladeCallerParams/{"initialData":{},"providerConfig":{"createUiDefinition":"https%3A%2F%2Fraw.githubusercontent.com%2Felastic%2Fazure-marketplace%2Fmaster%2Fsrc%2FcreateUiDefinition.json"}}). If you feel something is cached improperly use [this client unoptimized link instead](https://portal.azure.com/?clientOptimizations=false#blade/Microsoft_Azure_Compute/CreateMultiVmWizardBlade/internal_bladeCallId/anything/internal_bladeCallerParams/{"initialData":{},"providerConfig":{"createUiDefinition":"https%3A%2F%2Fraw.githubusercontent.com%2Felastic%2Fazure-marketplace%2Fmaster%2Fsrc%2FcreateUiDefinition.json"}})
+You can view the UI in developer mode by [clicking here](https://portal.azure.com/#blade/Microsoft_Azure_Compute/CreateMultiVmWizardBlade/internal_bladeCallId/anything/internal_bladeCallerParams/{"initialData":{},"providerConfig":{"createUiDefinition":"https%3A%2F%2Fraw.githubusercontent.com%2Felastic%2Fazure-marketplace%2Fhackfest%2Fsrc%2FcreateUiDefinition.json"}}). If you feel something is cached improperly use [this client unoptimized link instead](https://portal.azure.com/?clientOptimizations=false#blade/Microsoft_Azure_Compute/CreateMultiVmWizardBlade/internal_bladeCallId/anything/internal_bladeCallerParams/{"initialData":{},"providerConfig":{"createUiDefinition":"https%3A%2F%2Fraw.githubusercontent.com%2Felastic%2Fazure-marketplace%2Fhackfest%2Fsrc%2FcreateUiDefinition.json"}})
 
 ## Reporting bugs
 
@@ -35,7 +35,7 @@ The output from the market place UI is fed directly to the ARM template. You can
 <table>
   <tr><th>Parameter</td><th>Type</th><th>Description</th></tr>
   <tr><td>esVersion</td><td>enum</td>
-    <td>A valid supported Elasticsearch version see <a href="https://github.com/elastic/azure-marketplace/blob/master/src/mainTemplate.json#L8">this list for supported versions</a>
+    <td>A valid supported Elasticsearch version see <a href="https://github.com/elastic/azure-marketplace/blob/hackfest/src/mainTemplate.json#L8">this list for supported versions</a>
     </td></tr>
   <tr><td>esClusterName</td><td>string</td>
     <td> The name of the Elasticsearch cluster
@@ -61,7 +61,7 @@ The output from the market place UI is fed directly to the ARM template. You can
     </td></tr>
 
   <tr><td>vmSizeDataNodes</td><td>string</td>
-    <td>Azure VM size of the data nodes see <a href="https://github.com/elastic/azure-marketplace/blob/master/src/allowedValues.json">this list for supported sizes</a>
+    <td>Azure VM size of the data nodes see <a href="https://github.com/elastic/azure-marketplace/blob/hackfest/src/allowedValues.json">this list for supported sizes</a>
     </td></tr>
 
   <tr><td>vmDataNodeCount</td><td>int</td>
@@ -73,7 +73,7 @@ The output from the market place UI is fed directly to the ARM template. You can
     </td></tr>
 
   <tr><td>vmSizeMasterNodes</td><td>string</td>
-    <td>Azure VM size of the master nodes see <a href="https://github.com/elastic/azure-marketplace/blob/master/src/allowedValues.json">this list for supported sizes</a>. By default the template deploys 3 dedicated master nodes, unless <code>dataNodesAreMasterEligible</code> is set to <code>Yes</code>
+    <td>Azure VM size of the master nodes see <a href="https://github.com/elastic/azure-marketplace/blob/hackfest/src/allowedValues.json">this list for supported sizes</a>. By default the template deploys 3 dedicated master nodes, unless <code>dataNodesAreMasterEligible</code> is set to <code>Yes</code>
     </td></tr>
 
   <tr><td>vmClientNodeCount</td><td>int</td>
@@ -81,7 +81,7 @@ The output from the market place UI is fed directly to the ARM template. You can
     </td></tr>
 
   <tr><td>vmSizeClientNodes</td><td>string</td>
-    <td> Azure VM size of the client nodes see <a href="https://github.com/elastic/azure-marketplace/blob/master/src/allowedValues.json">this list for supported sizes</a>.
+    <td> Azure VM size of the client nodes see <a href="https://github.com/elastic/azure-marketplace/blob/hackfest/src/allowedValues.json">this list for supported sizes</a>.
     </td></tr>
 
   <tr><td>adminUsername</td><td>string</td>
@@ -114,7 +114,7 @@ The output from the market place UI is fed directly to the ARM template. You can
 
   <tr><td>location</td><td>string</td>
     <td>The location where to provision all the items in this template. Defaults to the special <code>ResourceGroup</code> value which means it will inherit the location
-    from the resource group see <a href="https://github.com/elastic/azure-marketplace/blob/master/src/allowedValues.json">this list for supported locations</a>.
+    from the resource group see <a href="https://github.com/elastic/azure-marketplace/blob/hackfest/src/allowedValues.json">this list for supported locations</a>.
     </td></tr>
 
 </table>
@@ -141,7 +141,7 @@ $ azure group create <name> <location>
 
 Next we can either use our published template directly using `--template-uri`
 
-> $ azure group deployment create --template-uri https://raw.githubusercontent.com/elastic/azure-marketplace/master/src/mainTemplate.json --parameters-file parameters/password.parameters.json -g name
+> $ azure group deployment create --template-uri https://raw.githubusercontent.com/elastic/azure-marketplace/hackfest/src/mainTemplate.json --parameters-file parameters/password.parameters.json -g name
 
 or if your are executing commands from a clone of this repo using `--template-file`
 
@@ -155,7 +155,7 @@ The `--parameters-file` can specify a different location for the items that get 
 
 ### Web based deploy
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Felastic%2Fazure-marketplace%2Fmaster%2Fsrc%2FmainTemplate.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Felastic%2Fazure-marketplace%2Fhackfest%2Fsrc%2FmainTemplate.json" target="_blank">
    <img alt="Deploy to Azure" src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
@@ -167,4 +167,4 @@ It should be pretty self explanatory except for password which only accepts a js
 
 # License
 
-This project is [MIT Licensed](https://github.com/elastic/azure-marketplace/blob/master/LICENSE.txt) and is based heavily on the [Elasticsearch azure quick start arm template](https://github.com/Azure/azure-quickstart-templates/tree/master/elasticsearch)
+This project is [MIT Licensed](https://github.com/elastic/azure-marketplace/blob/hackfest/LICENSE.txt) and is based heavily on the [Elasticsearch azure quick start arm template](https://github.com/Azure/azure-quickstart-templates/tree/master/elasticsearch)
