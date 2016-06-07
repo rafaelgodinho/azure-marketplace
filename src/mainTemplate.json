@@ -414,7 +414,7 @@
       "defaultValue": "10.0.1.0/24",
       "metadata": {
         "description": "The address space of the data node Subnet"
-    }
+      }
     }
   },
   "variables": {
@@ -503,7 +503,7 @@
           "settings": {
             "fileUris": "[variables('ubuntuScripts')]"
           },
-          "protectedSettings" : {
+          "protectedSettings": {
             "commandToExecute": "[concat('bash elasticsearch-ubuntu-install.sh -x', variables('commonShortOpts'), variables('commonInstallParams'))]"
           }
         },
@@ -515,7 +515,7 @@
           "settings": {
             "fileUris": "[variables('ubuntuScripts')]"
           },
-          "protectedSettings" : {
+          "protectedSettings": {
             "commandToExecute": "[variables('clientInstallScript')]"
           }
         },
@@ -527,7 +527,7 @@
           "settings": {
             "fileUris": "[variables('ubuntuScripts')]"
           },
-          "protectedSettings" : {
+          "protectedSettings": {
             "commandToExecute": "[concat('bash elasticsearch-ubuntu-install.sh -', variables('dataNodeShortOpt'), variables('commonShortOpts'), variables('commonInstallParams'))]"
           }
         },
@@ -539,7 +539,7 @@
           "settings": {
             "fileUris": "[variables('ubuntuScripts')]"
           },
-          "protectedSettings" : {
+          "protectedSettings": {
             "commandToExecute": "[concat('bash kibana-install.sh -', variables('installPluginsShortOpt'), 'n ', variables('esSettings').clusterName, ' -v ', variables('esSettings').kibanaVersion, ' -e ', variables('esSettings').version, ' -S ', variables('esSettings').shieldKibanaServerPwd)]"
           }
         }
@@ -578,7 +578,7 @@
     "networkResourceGroupMap": {
       "new": "[resourceGroup().name]",
       "existing": "[parameters('virtualNetworkResourceGroup')]"
-    }, 
+    },
     "networkSettings": {
       "virtualNetworkName": "[parameters('virtualNetworkName')]",
       "resourceGroup": "[variables('networkResourceGroupMap')[parameters('virtualNetworkNewOrExisting')]]",
@@ -1170,6 +1170,6 @@
     "jumpbox-shh": {
       "value": "[reference('jumpbox').outputs.ssh.value]",
       "type": "string"
-}
+    }
   }
 }
